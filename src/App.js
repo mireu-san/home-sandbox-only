@@ -1,42 +1,55 @@
 import "./App.css";
 import { useForm } from "react-hook-form";
 
-const LoginForm = () => {
+const LoginForm = ({
+  onSubmit = async (data) => {
+    await new Promise((r) => setTimeout(r, 1000));
+    alert(JSON.stringify(data));
+  },
+}) => {
   const {
     register,
     handleSubmit,
-    formStat: { isSubmitting },
+    formState: { isSubmitting, isDirty, errors },
   } = useForm();
 
   return (
-    <form
-      onSubmit={handleSubmit(async (data) => {
-        await new Promise((r) => setTimeout(r, 1000));
-        alert(JSON.stringify(data));
-      })}
-    >
-      <label htmlFor="id">ID</label>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <label htmlFor="email">Email</label>
       <input
-        id="id"
-        type="id"
-        name="id"
-        placeholder="input your ID"
-        {...register("email")}
+        id="email"
+        type="text"
+        placeholder="test@gmail.com"
+        aria-invalid={!isDirty ? undefined : errors.email ? "true" : "false"}
+        {...register("email", {
+          required: "must input email here",
+          pattern: {
+            value: /\S+@\S+\.\S+/,
+            message: "does not meet the email requirements",
+          },
+        })}
       />
+
+      {errors.email && <small role="alert">{errors.email.message}</small>}
       <label htmlFor="password">Password</label>
       <input
         id="password"
         type="password"
-        name="password"
-        placeholder=""
-        {...register("password")}
+        placeholder="???"
+        aria-invalid={!isDirty ? undefined : errors.password ? "true" : "false"}
+        {...register("password", {
+          required: "need password essentially",
+          minLength: {
+            value: 8,
+            message: "must input password more than 8 characters",
+          },
+        })}
       />
-
-      <button type="submit" diaabled={isSubmitting}>
+      {errors.password && <small role="alert">{errors.password.message}</small>}
+      <button type="submit" disabled={isSubmitting}>
         Log in
       </button>
     </form>
   );
 };
-
 export default LoginForm;
