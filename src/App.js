@@ -31,13 +31,12 @@ const LoginForm = () => {
         placeholder=""
         {...register("password")}
       />
-      <button type="submit">Log in</button>
+
+      <button type="submit" diaabled={isSubmitting}>
+        Log in
+      </button>
     </form>
   );
 };
-
-function App() {
-  return <div className="App">test</div>;
-}
 
 export default LoginForm;
